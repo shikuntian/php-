@@ -5,85 +5,74 @@
  * User: a88wangtian@163.com
  * Date: 2017/4/24
  */
-trait ezcReflectionReturnInfo
-{
-    function getReturnType()
-    { /*1*/
-        return "this is second trait";
+trait traitClass {
+    public function testTraitMethod(){
+        echo "the web site is www.ieo.xin";
     }
-    /*public function sayHello()
-    {
-        echo 'hello';
-    }*/
-    function getReturnDescription()
-    { /*2*/
+    public function testTraitOne(){
+        echo "the traitClass is www.ieo.xin";
     }
-}
-
-class ezcReflectionMethod extends ReflectionMethod
-{
-    use ezcReflectionReturnInfo;
-    /* ... */
-}
-
-class ezcReflectionFunction extends ReflectionFunction
-{
-    use ezcReflectionReturnInfo;
-    /* ... */
 }
 
 class Base
 {
-    public function sayHello()
+    public function testTraitMethod()
     {
-        echo 'Hello ';
+        echo 'This is a Base Class ';
+    }
+    public function testTraitOne(){
+        echo "the Base is www.ieo.xin";
     }
 }
-
-trait SayWorld
+class testTraitOne extends Base
 {
-    public function sayHello()
-    {
-        echo 'World!';
-    }
-}
-
-class MyHelloWorld extends Base
-{
-    /*use SayWorld,ezcReflectionReturnInfo{
-        ezcReflectionReturnInfo::sayHello insteadof SayWorld;
-        SayWorld::sayHello as say;
-    }*/
-
-    public function sayHello()
+    use traitClass;
+    public function testTraitMethod()
     {
         echo 'the is begin:';
     }
 
 }
 
-/*$o = new MyHelloWorld();
-$o->sayHello();
-$o->getReturnType();*/
+$o = new testTraitOne();
+$o->testTraitMethod();
+$o->testTraitOne();
+
+
 //冲突以及解决方法
 //Fatal error: Trait method sayHello has not been applied, because there are collisions with other trait methods on MyHelloWorld in E:\php-learning\basic\Trait.php on line 59
-//修改方法的访问控制
-class controllerClass extends Base {
-    /*use SayWorld,ezcReflectionReturnInfo {
-        SayWorld::sayHello as private;
-        ezcReflectionReturnInfo::getReturnType as public;
-    }*/
-}
-/*$ex = new controllerClass();
-$ex->getReturnType();*/
-trait baseTrait {
-    use SayWorld,ezcReflectionReturnInfo;
-}
-class baseTraitTestClass {
-    use baseTrait;
+trait traitTestClass1 {
+    public function testMethodTwo(){
+        echo "\n this is a method \n";
+    }
 }
 
+trait traitTestClass2{
+    public function testMethodTwo(){
+        echo "hello this  is a same method \n";
+    }
+}
+
+class traitTestIoe{
+    use traitTestClass1,traitTestClass2{
+        traitTestClass1::testMethodTwo insteadof traitTestClass2;
+        traitTestClass2::testMethodTwo as testMethodThree;
+    }
+}
+$ex = new traitTestIoe();
+$ex->testMethodTwo();
+$ex->testMethodThree();
+//修改方法的访问控制
+class traitTestIoe2{
+    use traitTestClass1,traitTestClass2{
+        traitTestClass1::testMethodTwo as public;
+        traitTestClass1::testMethodTwo insteadof traitTestClass2;
+        traitTestClass2::testMethodTwo as private;
+        traitTestClass2::testMethodTwo as testMethodThree;
+    }
+}
 //抽象方法的使用
+//使用trait的类必须实现相应的方法
 trait instanceTrait {
     public function getType(){
         echo "trait";
@@ -97,10 +86,10 @@ class testInstanceTrait {
         echo "is end";
     }
 }
+//Trait 的静态成员
 $ex = new testInstanceTrait();
 $ex->getType();
 $ex->getData();
-//Trait 的静态成员
 trait staticMember{
     static $c = 4;
     public static function get(){
